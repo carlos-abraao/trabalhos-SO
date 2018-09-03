@@ -34,6 +34,46 @@ int Fibesimo (int n){
 	return (1/sqrt(5))* pow(( (1+sqrt(5))/2 ), n) - (1/sqrt(5))* pow(( (1-sqrt(5))/2 ), n);
 }
 
+void createson(int ini, int fim, int rng);
+
+void FibFork(int pidd, int ini, int fim){
+
+	int rng = fim - ini;
+
+	int resul;    
+
+    if ( pidd == -1 ){
+        perror("impossivel de criar um filho\n") ;
+    }    
+    else if (pidd == 0){
+    	if (rng == 1){
+    		resul = Fibesimo(ini);
+    		printf("eita: %d \n", resul);
+    	}
+    	else{
+    		createson(ini, fim, rng);
+    	}
+
+        printf("\tOu melhor, assim espero!\n") ;
+        
+    }
+    else{
+
+        sleep(10) ; /* para separar bem as saidas do pai e do filho */ 
+    }
+
+}
+
+void createson(int ini, int fim, int rng){
+	int pidd = fork();
+	int mid = ini + rng;
+
+	FibFork(pidd, ini, mid);
+	FibFork(pidd, mid+1, fim);
+
+}
+
+
 int main(int argc, char const *argv[]){	
 
 	int ini, fim, rng;
@@ -44,36 +84,13 @@ int main(int argc, char const *argv[]){
 	while ( (ini <= 0 || fim <=0) || (fim < ini) ){
 		printf("Digite o intervalo novamente: \n");
 		scanf("%d%d", &ini, &fim);		
-	}
+	}	
 
-	rng = fim - ini;
-
-	int pid, resul;
+	int pid;
     
-    pid=fork(); /* criacao do filho */
+    pid = fork(); /* criacao do filho */
 
-    if ( pid==-1 ){
-        perror("impossivel de criar um filho\n") ;
-    }    
-    else if ( pid==0 ){
-    	if (rng == 1){
-    		resul = Fibesimo(ini);
-    	}
-
-        printf("\tOu melhor, assim espero!\n") ;
-        
-    }
-    else{
-
-        sleep(10) ; /* para separar bem as saidas do pai e do filho */
-        
-        printf("Matei, %d, meu filho\n",pid) ;
-        // sleep(10) ; /* para separar bem as saidas do pai e do filho */
-
-    }
-
-
-
+    FibFork(pid, ini, fim);
 
 	return 0;
 }
