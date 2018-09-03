@@ -2,8 +2,10 @@
 #include <math.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
+/*
 void Fib(){
 
 	int ini, fim;
@@ -29,6 +31,7 @@ void Fib(){
 
 	printf("\n");
 }
+*/
 
 int Fibesimo (int n){
 	return (1/sqrt(5))* pow(( (1+sqrt(5))/2 ), n) - (1/sqrt(5))* pow(( (1-sqrt(5))/2 ), n);
@@ -36,7 +39,7 @@ int Fibesimo (int n){
 
 void createson(int ini, int fim, int rng);
 
-void FibFork(int pidd, int ini, int fim){
+void FibFork(pid_t pidd, int ini, int fim){
 
 	int rng = fim - ini;
 
@@ -48,31 +51,30 @@ void FibFork(int pidd, int ini, int fim){
     else if (pidd == 0){
     	if (rng == 1){
     		resul = Fibesimo(ini);
-    		printf("eita: %d \n", resul);
+    		printf(" : %d ", resul);//eita
+    		exit(0);
     	}
     	else{
+    		//printf("Criando filho\n\n");
     		createson(ini, fim, rng);
-    	}
-
-        printf("\tOu melhor, assim espero!\n") ;
+    	}       
         
     }
     else{
-
-        sleep(10) ; /* para separar bem as saidas do pai e do filho */ 
+    		//printf("Sou pai\n\n");
+    		pidd = wait(NULL);
     }
 
 }
 
 void createson(int ini, int fim, int rng){
-	int pidd = fork();
-	int mid = ini + rng;
-
+	pid_t pidd = fork();
+	//wait();        
+	int mid = ini + (rng/2);
 	FibFork(pidd, ini, mid);
 	FibFork(pidd, mid+1, fim);
 
 }
-
 
 int main(int argc, char const *argv[]){	
 
@@ -81,16 +83,18 @@ int main(int argc, char const *argv[]){
 	printf("Digite o intervalo desejado da sequencia de fibonacci: \n");
 	scanf("%d%d", &ini, &fim);
 
-	while ( (ini <= 0 || fim <=0) || (fim < ini) ){
+	while ( (ini <= 0 || fim <= 0) || (fim < ini) ){
 		printf("Digite o intervalo novamente: \n");
 		scanf("%d%d", &ini, &fim);		
 	}	
 
-	int pid;
+	pid_t pid;
     
-    pid = fork(); /* criacao do filho */
+    pid = fork(); /* criacao do filho */    
 
     FibFork(pid, ini, fim);
+
+    printf("\n");
 
 	return 0;
 }
