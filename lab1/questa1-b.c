@@ -41,14 +41,14 @@ void createson(int ini, int fim, int rng);
 
 void FibFork(pid_t pidd, int ini, int fim){
 
-	int rng = fim - ini;
+	int rng = (fim - ini);// + 1;
 
 	int resul;    
 
     if ( pidd == -1 ){
         perror("impossivel de criar um filho\n") ;
     }    
-    else if (pidd == 0){
+    else if (pidd == 0){ // ==1
     	if (rng == 1){
     		resul = Fibesimo(ini);
     		printf(" : %d ", resul);//eita
